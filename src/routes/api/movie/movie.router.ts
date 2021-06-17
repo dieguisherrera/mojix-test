@@ -12,7 +12,7 @@ export interface IMovieRouter {
 @injectable()
 export class MovieRouter implements IMovieRouter{
 
-    @inject("itemService")
+    @inject("movieService")
     private movieService: IMovieService;
 
     public getRouter(): Router {
@@ -28,7 +28,7 @@ export class MovieRouter implements IMovieRouter{
         router.route('/movie/views/:id').get(auth, this.movieService.getLikes);
         router.route('/movie/category/:id').post(auth, this.movieService.setCategory);
 
-        router.delete('/item/:id', (request: Request, response: Response) => {
+        router.delete('/movie/:id', (request: Request, response: Response) => {
             movieDAO.delete(request, response);
         });
         return router;
