@@ -7,9 +7,10 @@ const UserSchema = new mongoose.Schema({
     username: {type: String, required: true},
     email: {type: String, required: true, index: {unique: true}},
     phone: {type: String},
+    address: {type: String},
     password: {type: String},
-    shopId: {type: String},
-    isAdmin: {type: Boolean}
+    billingId: {type: String},
+    locationId: {type: String}
 });
 
 UserSchema.pre('save', function (next) {

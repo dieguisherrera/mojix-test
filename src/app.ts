@@ -12,12 +12,9 @@ import {UserRouter, IUserRouter} from './routes/api/users/user.router';
 import {Container} from "inversify";
 import {Connection, IConnection} from "./services/connection";
 import {UserService, IUserService} from "./services/user.service";
-import {IItemRouter, ItemRouter} from './routes/api/items/item.router';
-import {IItemService, ItemService} from './services/item.service';
-import {IShopRouter, ShopRouter} from './routes/api/shops/shop.router';
-import {DbLogService, IDbLogService} from './services/dbLog.service';
-import {DbLogRouter, IDbLogRouter} from './routes/api/dbLogs/dblog.router';
-import {CategoryRouter, ICategoryRouter} from './routes/api/category/category.router';
+import {IMovieRouter, MovieRouter} from './routes/api/movie/movie.router';
+import {IMovieService, MovieService} from './services/movie.service';
+import {IStudioRouter, StudioRouter} from './routes/api/studio/studio.router';
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -36,15 +33,12 @@ class App {
         //services 
         this.container.bind<IConnection>("connection").to(Connection);
         this.container.bind<IUserService>("userService").to(UserService);
-        this.container.bind<IItemService>("itemService").to(ItemService);
-        this.container.bind<IDbLogService>("dbLogService").to(DbLogService);
-
+        this.container.bind<IMovieService>("movieService").to(MovieService);
+        
         //routers
-        this.container.bind<IItemRouter>("itemRouter").to(ItemRouter);
+        this.container.bind<IMovieRouter>("movieRouter").to(MovieRouter);
         this.container.bind<IUserRouter>("userRouter").to(UserRouter);
-        this.container.bind<IShopRouter>("shopRouter").to(ShopRouter);
-        this.container.bind<IDbLogRouter>("dbLogRouter").to(DbLogRouter);
-        this.container.bind<ICategoryRouter>("categoryRouter").to(CategoryRouter);
+        this.container.bind<IStudioRouter>("studioRouter").to(StudioRouter);
         this.container.bind<IApi>("api").to(Api);
 
         this.app = express();

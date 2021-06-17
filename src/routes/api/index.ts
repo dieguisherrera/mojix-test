@@ -1,12 +1,10 @@
 import {Router} from "express";
-import {IItemRouter} from './items/item.router';
+import {IMovieRouter} from './movie/movie.router';
 import {IUserRouter} from './users/user.router';
 import {inject, injectable} from "inversify";
 import "reflect-metadata";
 import jwt = require('express-jwt');
-import {IShopRouter} from './shops/shop.router';
-import {IDbLogRouter} from './dbLogs/dblog.router';
-import {ICategoryRouter} from './category/category.router';
+import {IStudioRouter} from './studio/studio.router';
 import {Config} from '../../config';
 
 
@@ -23,35 +21,27 @@ export const auth = jwt({
 @injectable()
 export class Api implements IApi {
 
-    @inject("itemRouter")
-    private itemRouter: IItemRouter;
+    @inject("movieRouter")
+    private movieRouter: IMovieRouter;
 
     @inject("userRouter")
     private userRouter: IUserRouter;
 
-    @inject("categoryRouter")
-    private categoryRouter: ICategoryRouter;
-
-    @inject("shopRouter")
-    private shopRouter: IShopRouter;
-
-    @inject("dbLogRouter")
-    private dbLogRouter: IDbLogRouter;
+    @inject("studioRouter")
+    private studioRouter: IStudioRouter;
 
     public getRouter(): Router {
 
         let router = Router();
 
         // split up route handling
-        router.use('/items', this.itemRouter.getRouter());
-        router.use('/shops', this.shopRouter.getRouter());
+        router.use('/movies', this.movieRouter.getRouter());
+        router.use('/studio', this.studioRouter.getRouter());
         router.use('/users', this.userRouter.getRouter());
-        router.use('/categories', this.categoryRouter.getRouter());
-        router.use('/logs', this.dbLogRouter.getRouter());
 
         router.use('/', (msg: any, res: any, next) => {
             res.send({
-                message: 'I am a server route and can also be hot reloaded!'
+                message: 'I am a server'
             });
             next();
         });

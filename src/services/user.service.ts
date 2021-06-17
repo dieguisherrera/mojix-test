@@ -3,7 +3,8 @@ import "reflect-metadata";
 import {Request, Response} from 'express';
 import {Config} from '../config';
 import User from '../model/user';
-import Shop from '../model/shop';
+import Location from '../model/location';
+import Billing from '../model/billing';
 
 const Jwt = require('jsonwebtoken');
 
@@ -16,8 +17,6 @@ export interface IUserService {
     logOut(req: Request, res: Response);
 
     signUp(req: Request, res: Response);
-
-    createSocialLoginUser(req: Request, res: Response);
 
     updateProfile(req: Request, res: Response);
 
@@ -66,58 +65,6 @@ export class UserService implements IUserService {
                     user: user
                 });
             }
-        });
-    };
-
-    public createSocialLoginUser(request: Request, response: Response) {
-
-        class OpenID {
-            name: string;
-            email: string;
-            picture: string;
-        }
-
-        // fetch user and test password verification
-        let openID: OpenID = request.body;
-
-        User.findOne({email: openID.email}, function (err, existingUser: any) {
-            if (err) {
-                response.status(404).send({
-                    error: 'System Error: ' + err,
-                    status: response.status,
-                    err
-                });
-                return;
-            }
-
-            if (existingUser != null) {
-                response.status(404).send({
-                    error: 'Existing User.',
-                    status: response.status,
-                    err
-                });
-                return;
-            }
-
-            // ****************************
-            // Create User and Shop
-            // ****************************
-
-            let shop = new Shop({
-                name : "My Shop"
-            });
-            shop.save();
-
-
-            //create user
-            let user = new User({
-                username: openID.name,
-                email: openID.email,
-                shopId: shop._id
-            });
-            user.save();
-
-            response.status(200).send(user);
         });
     };
 
@@ -224,24 +171,34 @@ export class UserService implements IUserService {
             }
 
             // ****************************
-            // Create User and Shop
+            // Create User and Studio
             // ****************************
 
-            let shop = new Shop({
-                name : "My Shop"
+            //create location
+            let location = new Location({
+                lat: request.body.lat,
+                lon: request.body.lon
             });
-            shop.save();
+            location.save();
 
+            //create billing
+            let billing = new Billing({
+                data: request.body.data
+            });
+            billing.save();
 
             //create user
             let user = new User({
                 username: request.body.username,
                 email: request.body.email,
                 phone: request.body.phone,
+                addres: request.body.address,
                 password: request.body.password,
-                shopId: shop._id
+                locationId: location._id,
+                billingId: billing._id
             });
             user.save();
+
 
             //login user
             let token = Jwt.sign(user, Config.privateKey, {
