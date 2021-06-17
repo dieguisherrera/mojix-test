@@ -15,6 +15,7 @@ import {UserService, IUserService} from "./services/user.service";
 import {IMovieRouter, MovieRouter} from './routes/api/movie/movie.router';
 import {IMovieService, MovieService} from './services/movie.service';
 import {IStudioRouter, StudioRouter} from './routes/api/studio/studio.router';
+import {IStudioService, StudioService} from './services/studio.service';
 
 // Creates and configures an ExpressJS web server.
 class App {
@@ -34,6 +35,7 @@ class App {
         this.container.bind<IConnection>("connection").to(Connection);
         this.container.bind<IUserService>("userService").to(UserService);
         this.container.bind<IMovieService>("movieService").to(MovieService);
+        this.container.bind<IStudioService>("studioService").to(StudioService);
         
         //routers
         this.container.bind<IMovieRouter>("movieRouter").to(MovieRouter);
@@ -44,6 +46,32 @@ class App {
         this.app = express();
         this.middleware();
         this.routes();
+        const swagger = require("swagger-generator-express");
+        const options = {
+            title: "swagger-generator-express",
+            version: "1.0.0",
+            host: "localhost:3000",
+            basePath: "/",
+            schemes: ["http", "https"],
+            securityDefinitions: {
+                Bearer: {
+                    description: 'Example value:- Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjU5MmQwMGJhNTJjYjJjM',
+                    type: 'apiKey',
+                    name: 'Authorization',
+                    in: 'header'
+                }
+            },
+            security: [{
+                Bearer: []
+            }],
+            defaultSecurity: 'Bearer'
+        };
+        
+        swagger.serveSwagger(this.app, "/swagger", options, {
+            routePath: './src/routes/',
+            requestModelPath: './src/model',
+            responseModelPath: './src/model'
+        });
     }
 
     // Configure Express middleware.
@@ -73,7 +101,6 @@ class App {
 
         //serve images publicly in public/images folder
         this.app.use(express.static(__dirname + '/../public/'));
-
         mongoose.connect(Config.mongoUrl, {
             useMongoClient: true,
         }); // connect to our database

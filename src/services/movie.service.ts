@@ -38,7 +38,7 @@ export class MovieService implements IMovieService {
         });
     };
     public setCategory(request: Request, response: Response) {
-        Category.findOne({name: request.body.category}, function (err, category: any) {
+        Category.findOne({name: request.body.name}, function (err, category: any) {
             if (err) {
                 response.status(404).send({
                     authorized: false,

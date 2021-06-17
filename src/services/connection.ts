@@ -23,6 +23,7 @@ export class Connection implements IConnection {
 
     // Open the MongoDB connection.
     public open() {
+        console.log('intntando conectar');
         if (this.dbConnection == null) {
 
             // Connect using MongoClient
